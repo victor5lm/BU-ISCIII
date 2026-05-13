@@ -160,7 +160,7 @@ find $NXF_SINGULARITY_CACHEDIR -name "*.img" > my_list_of_remotely_available_ima
 ```
 This is done so as to avoid unnecessary container image downloads. The .txt file created will contain a list of already available images as plain text, in this case the images stored in `/data/ucct/bi/pipelines/singularity-images/`.
 
-1. Run the following command, which consists in three steps:
+5. Run the following command, which consists in three steps:
    * Inside the `/data/ucct/bi/pipelines/your-pipeline/` folder, create a new subfolder for the new version of the pipeline.
    * Go to this new subfolder.
    * Run the **`download`** module, specifying the following options:
@@ -172,7 +172,7 @@ This is done so as to avoid unnecessary container image downloads. The .txt file
 mkdir nf-core-bacass-2.4.0 && cd nf-core-bacass-2.4.0 && nf-core pipelines download bacass -r 2.4.0 --container-cache-utilisation remote --container-cache-index ~/my_list_of_remotely_available_images.txt -x none
 ```
 
-1. Check what you see on the screen, in order to make sure the process finishes without any errors.
+6. Check what you see on the screen, in order to make sure the process finishes without any errors.
 
 ## What if the researcher asked for the analysis of samples that do not appear on iSkyLIMS?
 
