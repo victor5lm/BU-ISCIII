@@ -66,7 +66,7 @@ If a specific run is not recent, it might have already been archived and not app
 >
 >You must have NGS_Data mounted in your local PC. To mount it, run the following command (**you might have to ask for all pertinent permissions before mountint this folder, by submitting a request in sau.isciii.es**):
 >```
->sudo mount -v -t cifs -o username=<user>,domain=ISCIII //galera.isciii.es/NGS_Data /data/NGS_Data
+>sudo mount -v -t cifs -o username=<user>,domain=ISCIII //FastqData.isciii.es/HPC_NGS_Data_Raw /data/NGS_Data
 >```
 
 ## What if the HPC is not working or it is working very slowly?
@@ -94,7 +94,7 @@ sudo sshfs -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other
 ```
 3. Now, mount `/data/bioinfo_doc/` in your WS
 ```
-sudo mount -t cifs -o username=<user>,domain=ISCIII,uid=XXXX,gid=XXXX //neptuno.isciii.es/bioinfo_doc /data/bioinfo_doc
+sudo mount -t cifs -o username=<user>,domain=ISCIII,uid=XXXX,gid=XXXX //habermas.isciii.es/bioinfo_doc /data/bioinfo_doc
 ```
 
 >[!NOTE]
@@ -150,7 +150,7 @@ Once you have the new Singularity image, please test it before implementing it i
 
 If you need to install on the HPC a new version of an **nf-core pipeline**, this procedure should be done by means of the [**nf-core-tools**](https://nf-co.re/docs/nf-core-tools/pipelines/download). To do so, follow these steps:
 
-1. Activate the corresponding micromamba environment: `micromamba activate nf-core-2.14.0`.
+1. Activate the corresponding micromamba environment: `micromamba activate nf-core-4.0.2`.
 2. Go to the folder in which you want to download the new version of this pipeline. Let's say you want to download a new version of [nf-core-bacass](https://nf-co.re/bacass/2.4.0/): `cd /data/ucct/bi/pipelines/nf-core-bacass`.
 3. Make sure you have added this line in your `.bashrc` file: `export NXF_SINGULARITY_CACHEDIR="/data/ucct/bi/pipelines/singularity-images"`, as stated in the [**Usage**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Usage) page in the wiki.
 4. In your HPC home, create the following file:
@@ -160,7 +160,7 @@ find $NXF_SINGULARITY_CACHEDIR -name "*.img" > my_list_of_remotely_available_ima
 ```
 This is done so as to avoid unnecessary container image downloads. The .txt file created will contain a list of already available images as plain text, in this case the images stored in `/data/ucct/bi/pipelines/singularity-images/`.
 
-5. Run the following command, which consists in three steps:
+1. Run the following command, which consists in three steps:
    * Inside the `/data/ucct/bi/pipelines/your-pipeline/` folder, create a new subfolder for the new version of the pipeline.
    * Go to this new subfolder.
    * Run the **`download`** module, specifying the following options:
@@ -169,10 +169,10 @@ This is done so as to avoid unnecessary container image downloads. The .txt file
      * `--container-cache-index`: with this option, and indicating the route to the .txt file that indicates the images that are already downloaded, you can avoid unnecessary image downloads, as stated before.
      * `-x`: archive compression type.
 ```
-mkdir nf-core-bacass-2.4.0 && cd nf-core-bacass-2.4.0 && nf-core download bacass -r 2.4.0 --container-cache-utilisation remote --container-cache-index ~/my_list_of_remotely_available_images.txt -x none
+mkdir nf-core-bacass-2.4.0 && cd nf-core-bacass-2.4.0 && nf-core pipelines download bacass -r 2.4.0 --container-cache-utilisation remote --container-cache-index ~/my_list_of_remotely_available_images.txt -x none
 ```
 
-6. Check what you see on the screen, in order to make sure the process finishes without any errors.
+1. Check what you see on the screen, in order to make sure the process finishes without any errors.
 
 ## What if the researcher asked for the analysis of samples that do not appear on iSkyLIMS?
 
