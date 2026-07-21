@@ -4,9 +4,9 @@
 
 This is a brief tutorial on how to perform a **cgMLST/wgMLST** service as a member of the ISCIII's Bioinformatics Unit (BU-ISCIII)! First of all, please remember that cgMLST/wgMLST is associated with the **_Bacteria: Core genome or whole genome Multi-Locus Sequence Typing analysis (cg/wgMLST)_** service from the [**service catalog**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Service-portfolio).
 
-**MLST** stands for **MultiLocus Sequence Typing**. For each hosekeeping gene, the different sequences present within a bacteria species are assigned as distinct alleles and, for each isolate, the alleles for each of the loci define the allelic profile or **Sequence Type** (**ST**). Do not confuse with SeroType, they are not the same.
+**MLST** stands for **MultiLocus Sequence Typing**. For each housekeeping gene, the different sequences present within a bacteria species are assigned as distinct alleles and, for each isolate, the alleles for each of the loci define the allelic profile or **Sequence Type** (**ST**). Do not confuse with SeroType, they are not the same.
 
-Each bacterial species has their own **MLST schema**. A **Schema** is a **pre-defined set of loci that is used in MLST analyses**. Traditional MLST schemas relied in **7 loci** that were internal fragments of housekeeping genes. In genomic analyses, schemas can be:
+Each bacterial species has its own **MLST schema**. A **Schema** is a **pre-defined set of loci that is used in MLST analyses**. Traditional MLST schemas relied in **7 loci** that were internal fragments of housekeeping genes. In genomic analyses, schemas can be:
 
 - **cgMLST** (**core-genome MLST**): Set of loci that are present in the **majority** of **strains** for **core genome** (cg) MLST schemas, typically a threshold of presence in **95%** of the strains is used in Schema Creation.
 - **wgMLST** (**whole-genome MLST**): Set of loci that are present in **at least one of the analyzed strains** in the Schema Creation for **whole genome MLST schemas**.
@@ -252,7 +252,11 @@ If you place your mouse on the end of the lines, you'll see the number of genes 
 
 #### `03-grapetree`
 
-Now we can leave `02-chewbbaca` folder and move into **`03-grapetree`** folder to perform the **Minimun Spanning Tree** with **GrapeTree**. [GrapeTree](https://enterobase.readthedocs.io/en/latest/grapetree/grapetree-about.html) is a fully interactive, tree visualization program within EnteroBase, which supports facile manipulations of both tree layout and metadata. It generates GrapeTree figures using the **Neighbor-Joining (NJ) algorithm**, the classical minimal spanning tree algorithm (**MSTree**) similar to PhyloViz, or an improved minimal spanning tree algorithm which we call **MSTree V2**.
+Now we can leave `02-chewbbaca` folder and move into **`03-grapetree`** folder to perform the **Minimun Spanning Tree** with **GrapeTree**.
+
+A Minimum Spanning Tree (MST) is a tree connecting all nodes in a graph, in a way such that the sum of edge lengths is minimized. Given a set of pairwise distances that describe the degree of dissimilarity among individuals, an MST represents a set of edges (connections) that link together nodes (individuals) by the shortest possible distance. In molecular epidemiology, this path is interpreted as the most likely chain of pathogen transmission. Given that MSTs are calculated from simple arithmetic distance matrices, they are particularly useful for examining relationships of organisms over short time scales, such as disease outbreaks or the short-range transmission of pathogens within communities, where not enough genetic diversity has accrued to permit the use of more mathematically sophisticated algorithms for inferring population structure, such as phylogenetic analysis or model-based clustering algorithms.
+
+ [**GrapeTree**](https://enterobase.readthedocs.io/en/latest/grapetree/grapetree-about.html) is a fully interactive, tree visualization program within EnteroBase, which supports facile manipulations of both tree layout and metadata. It generates GrapeTree figures using the **Neighbor-Joining (NJ) algorithm**, the classical minimal spanning tree algorithm (**MSTree**) similar to PhyloViz, or an improved minimal spanning tree algorithm which we call **MSTree V2**. We will use the MSTree algorithm in our case since PhyloViz has proven to add false allele differences.
 
 >[!WARNING]
 >This program has to be installed **locally**, not in the HPC. It requires **Python3**. To install this, please run:
@@ -264,14 +268,14 @@ pip install grapetree
 pip install pandas
 ```
 
-To launch GrapeTree, just run the `grapetree` command in your terminal. You will need to load the previosuly mentioned `allele_calling_evaluation/masked_profiles.tsv` file.
+To launch GrapeTree, just run the `grapetree` command in your terminal. You will need to load the `allele_calling_evaluation/cgMLST_profiles.tsv` file, which contains the allelic profiles for the set of core loci.
 
 >[!WARNING]
->Before uploading the `masked_profiles.tsv` file, change the row names so they only contain the sample name, not the whole assembly .fasta name. The metadata (if any) file is uploaded in the same way as the .tsv file.
+>Before uploading the `cgMLST_profiles.tsv` file, change the row names so they only contain the sample name, not the whole assembly .fasta name. The metadata (if any) file is uploaded in the same way as the .tsv file.
 
 Then do the following:
 
-- **Inputs/Outputs** > **Load Files** > Select the `masked_profiles.tsv` file in allele_calling_evaluation > **Parameters For Tree Creation** > **MSTree**
+- **Inputs/Outputs** > **Load Files** > Select the `cgMLST_profiles.tsv` file in allele_calling_evaluation > **Parameters For Tree Creation** > **MSTree**
 - **Tree Layout**:
   - **Node Style**
     - **Show labels**
@@ -288,6 +292,15 @@ Then do the following:
 - **Inputs/Outputs**: (**save these files in the service's `03-grapetree` folder**)
   - Save **SVG**
   - Save **Newick Tree** (nwk)
+
+>[!NOTE]
+>After following the previously mentioned steps, you should see the allelic distances between each pair of nodes on top of each edge. **These distances should be the ones indicated in the `distance_matrix_symmetric.tsv` file generated by ChewBBACA.**
+
+>[!WARNING]
+>If the allelic distance between two or more samples is 0, they will be included in the same node, which will have a bigger size than the rest of nodes of the graph. To see all samples included in the same node, go to **Tree Layout -> Node Style -> Show Pie Chart**, and you will then have to add these sample names manually on the exported images using any useful tool.
+
+>[!WARNING]
+>Given the circumstances, you might have to change the names of the samples on the tree. You can either modify directly the cgMLST_profiles.tsv file or change the names on GrapeTree, although this is not fast. If you decide to do so, go to **Context Menu -> Metadata -> Show Metadata Table**.
 
 ### Results obtained after the analysis
 
@@ -364,11 +377,11 @@ Once you have checked that everything has finished correctly by checking the `lo
   
     - `cgMLST_MSA.fasta`: contains the MSA of the core loci. For each locus in the core genome, the alleles found in all samples are translated and aligned with MAFFT. The alignment files are concatenated to generate the full alignment. **This file can be loaded into MEGA to generate an aminoacid change matrix that can then be sent to the researchers if it's the case.**
   
-    - `cgMLST_profiles.tsv`: contains the allelic profiles for the set of core loci.
+    - `cgMLST_profiles.tsv`: contains the allelic profiles for the set of core loci. We will use this file for the **GrapeTree Minimun Spaning Tree** procedure that we'll see in a while.
   
     - `distance_matrix_symmetric.tsv`: contains the symmetric distance matrix. The distances are computed by determining the number of allelic differences from the set of core loci (shared by 100% of the samples) between each pair of samples.
   
-    - `masked_profiles.tsv`: contains the masked allelic profiles (results from masking the allelic profiles in the `results_alleles.tsv` file generated by the AlleleCall module). We will use this file for the [**GrapeTree Minimun Spaning Tree** procedure that we'll see in a while.
+    - `masked_profiles.tsv`: contains the masked allelic profiles (results from masking the allelic profiles in the `results_alleles.tsv` file generated by the AlleleCall module).
 
     - `presence_absence.tsv`: Contains the loci presence-absence matrix.
   
