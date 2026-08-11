@@ -4,11 +4,42 @@ Welcome to this tutorial on how to perform a **Snippy Service** as a member of t
 
 **First of all**, when using the "Snippy" term, we refer to the **Fungal / bacteria / virus : Variant calling, annotation and SNP-based outbreak analysis (e.g. haploid fungal outbreak)** service that researchers can select when requesting a service. Usually, this service is requested along with the **Bacteria: *de novo* genome assembly and annotation**, **Bacteria: Plasmid analysis and characterization** and **Bacteria: Multi-Locus Sequence Typing (MLST), analysis of virulence factors, antimicrobial resistance, and plasmids characterization** services, which correspond to the **assembly**, **plasmidid** and **characterization** templates, respectively.
 
+## Index
+
+Since this document contains a lot of information, in case you need help with a specific task, you can use this index:
+
+- [How to perform the Snippy service](#how-to-perform-the-snippy-service)
+  - [Index](#index)
+  - [Introduction](#introduction)
+    - [Service request](#service-request)
+    - [Software used](#software-used)
+  - [Bioinformatics procedure](#bioinformatics-procedure)
+  - [What should I do after I've run all the necessary scripts?](#what-should-i-do-after-ive-run-all-the-necessary-scripts)
+    - [How can I obtain the SNP matrices for the Excel summary file?](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file)
+    - [What if I want to check what the tree obtained after `iqtree` looks like?](#what-if-i-want-to-check-what-the-tree-obtained-after-iqtree-looks-like)
+    - [What if I want to check the size of `phylo.aln`?](#what-if-i-want-to-check-the-size-of-phyloaln)
+    - [What if I need to remove complex variants?](#what-if-i-need-to-remove-complex-variants)
+    - [What if I need to remove low coverage variants?](#what-if-i-need-to-remove-low-coverage-variants)
+    - [What if I want to evaluate the variants of a certain pair of samples?](#what-if-i-want-to-evaluate-the-variants-of-a-certain-pair-of-samples)
+    - [What if I want to check whether a variant is a false positive?](#what-if-i-want-to-check-whether-a-variant-is-a-false-positive)
+      - [CASE 1: TRUE VARIANT](#case-1-true-variant)
+      - [CASE 2: FALSE VARIANT DUE TO LOW DEPTH OF COVERAGE](#case-2-false-variant-due-to-low-depth-of-coverage)
+      - [CASE 3: FALSE VARIANT DUE TO CLOSE INDELS](#case-3-false-variant-due-to-close-indels)
+      - [CASE 4: HETEROZYGOUS SITES](#case-4-heterozygous-sites)
+  - [Outbreak report template](#outbreak-report-template)
+
 ## Introduction
 
 ### Service request
 
 Within which context is this service carried out? In general, the researcher that requests this service provides an external file (usually an Excel file) indicating the samples that must be analysed, which species they correspond to, etc., unless there aren't a lot of samples or they are all related to the same species.
+
+>[!WARNING]
+>**Snippy is** mainly **useful** when the researcher wants to perform an **SNP analysis** on **samples that are known to belong to the same species**. This software can therefore be employed for strain identification, for example, since a reference genome has to be provided to Snippy in order to determine the differences existing between samples. 
+>
+>In case you are requested to analyse samples that do NOT belong to the same species, for example if the researcher is not sure about the species to which a sample belongs and wants to know which known species this sample could be the closest to, Snippy (or directly SNP analysis) is not the best approach, because you won't be able to know which reference to use for this procedure.
+>
+>**For genus-level analyses, wg/cgMLST analysis is more appropriate**, which is a service offered by BU-ISCIII and which you can read more about at the [cgMLST-wgMLST service](https://github.com/BU-ISCIII/BU-ISCIII/wiki/cgMLST-wgMLST-service) guide.
 
 Considering this information, they will ask for the **assembly** of the samples, followed by the **identification** of **virulence factors**, **antibiotic resistances** and **plasmids**, and an **SNP analysis**:
 * For the **assembly** of the samples, the bioinformatics procedure that must be carried out is explained in detail the **[Assembly service](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Assembly-service) guide**.
@@ -35,7 +66,7 @@ For this service, two main programmes are employed in order to perform **SNP ana
   **This whole procedure will be shown step-by-step through this guide.**
 * [**IQTREE**](http://www.iqtree.org/): Iqtree is a phylogenetic tree generation programme that estimates the tree that most adequately represents the evolutionary relationships between the evaluated strains, by selecting the best [**substitution model**](http://www.iqtree.org/doc/Substitution-Models).
 
-* [**MEGA**](https://www.megasoftware.net/): this software can be used for multiple purposes within the context of **evolutionary analysis**, including the selection of the best-fit substitution model, the estimation of evolutionary distances and divergence times, the reconstruction of phylogenies, the prediction of ancestral sequences and the diagnosis of disease mutations ([Caspermeyer, 2018](https://doi.org/10.1093/molbev/msy098)). In our case, we'll use it to obtain the **SNP matrix** with the pairwise distances among the samples that was mentioned previously.
+* [**MEGA**](https://www.megasoftware.net/): this software can be used for multiple purposes within the context of **evolutionary analysis**, including the selection of the best-fit substitution model, the estimation of evolutionary distances and divergence times, the reconstruction of phylogenies, the prediction of ancestral sequences and the diagnosis of disease mutations ([Caspermeyer, 2018](https://doi.org/10.1093/molbev/msy098)). In our case, it can be used to obtain the **SNP matrix** with the pairwise distances among the samples that was mentioned previously, even though the usage of this software is not mandatory, as will be shown later.
 
 ## Bioinformatics procedure
 
@@ -76,7 +107,7 @@ Now, let's execute the first BU-ISCIII tool: `new-service`, where you'll need to
 buisciii new-service SRVCNMXXX.X
 ```
 
-By default, **a `.log` file from this module's execution will be saved for tracking purposes in the service folder that will be created within `services_and_colaborations`**. This log file will have the following structure: `SRVCNMXXX.X.tool.log`, where `tool` is the name of the buisciii-tools module being launched. For instance, the log file will be named `SRVCNMXXX.X.new-service.log` if the module you are launching is `new-service`.
+**By default,** **a `.log` file from this module's execution will be saved for tracking purposes in the service folder that will be created within `services_and_colaborations`**. This log file will have the following structure: `SRVCNMXXX.X.tool.log`, where `tool` is the name of the buisciii-tools module being launched. For instance, the log file will be named `SRVCNMXXX.X.new-service.log` if the module you are launching is `new-service`.
 
 >[!NOTE]
 >If you need the `.log` file to be saved in your PWD for any reason, or you want it to have a different name, use the option `--log-file` and indicate the name of your log file, for example:
@@ -210,11 +241,13 @@ If everything is OK, we can then get into the `ANALYSIS` folder and we'll find t
       * It finally runs `snp-sites`, with the `-c` option, using `gubbins.filtered_polymorphic_sites.fasta` as input, outputting the file `clean.core.aln`. This file will consist, therefore, in an **SNP alignment** of the **core genome** with **both variant and invariant sites**, but this time **with no recombinant sites**.
   
     * Creates a script called `_03_run_gubbins.sh` that will run `_03_gubbins.sh` as a slurm job.
+  
+    * Creates a final script called `_04_snp_distance_matrices.sh` that will generate the distance matrices that will generally be reported to the researchers in the final summary table. This script should be launched by running the `_04_run_snp_distance_matrices.sh` script. To know more about what this script does and the files that it generates, please check the [**How can I obtain the SNP matrices for the Excel summary file?**](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file) section.
 
-    > **After running `lablog`, run `_00_snippy.sh`, `_01_snippy_core.sh`, `_02_phylo_aln.sh` and `_03_run_gubbins.sh` sequentially.**
+    > **After running `lablog`, run `_00_snippy.sh`, `_01_snippy_core.sh`, `_02_phylo_aln.sh`, `_03_run_gubbins.sh` and `_04_run_snp_distance_matrices.sh` sequentially.**
   
   * `06-iqtree`: this folder contains a `lablog` file that does the following:
-      > Note: This lablog must be run twice. The first time this lablog is run, only the uncommented lines will be executed. After the _00_iqtreemfp.sh has finished its execution, the uncommented lines must be commented out, and vice versa. Then run the lablog a second time.
+      > Note: **This lablog must be run twice**. The first time this lablog is run, only the uncommented lines will be executed. After the `_00_iqtreemfp.sh` has finished its execution, the uncommented lines must be commented out, and vice versa. Then run the lablog a second time.
 
     * Creates a subfolder called `logs`.
   
@@ -290,6 +323,7 @@ Once you have gone through all these folders and run all the required scripts, y
 Once we are done with the service (including the assembly, characterization and plasmidid procedures, since this is the usual case), we'll have to review the results from each procedure and add all the relevant information into an Excel file. For this, we use a **template** that you can find [**here**](https://docs.google.com/spreadsheets/d/1m_hnCGNgtWcoJAjs_91BkmfJn6CNr4yO/edit?usp=drive_link&ouid=108428245306738036878&rtpof=true&sd=true).
 
 In this Excel file, we can find the following sheets:
+* **README**: this initial sheet contains general information regarding the data being reported in this file, including a description, source of the information, samples being included, alignment sites and notes of interest.
 * **summary**: this sheet contains information regarding the assembly performed previously (check the [**Assembly service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Assembly-service) page), Kmerfinder, the MLST profile identified for the samples and the mapping procedure done against the reference used for snippy.
   * For the **MLST profile**, please check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service) page.
   * For the **Kmerfinder** columns `07-kmerfinder_best_hit_# Assembly`, `07-kmerfinder_best_hit_Accession Number` and `07-kmerfinder_best_hit_Description`, please check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service) page.
@@ -299,15 +333,20 @@ In this Excel file, we can find the following sheets:
     * `coverage > 10x`: this information is obtained from the `wgs_metrics_all_filtered.txt` file from `99-stats` (column `PCT_10X`).
     * `Variants (SNP;DEL;INS;HET)`: this information is obtained from the `variants_stats.txt` file from `99-stats`.
   * The **ASSEMBLY** columns are relative to the assembly service. Please check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service) page.
-* **snpmatrix_all_pos**: please go to the [**How can I obtain the SNP matrices for the Excel summary file?**](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file) section. This sheet is filled in after loading **`phylo.aln.fasta`** into **MEGA**.
-* **snpmatrix_all_pos_pairs**: please go to the [**How can I obtain the SNP matrices for the Excel summary file?**](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file) section. This sheet is filled in after loading **`phylo.aln.fasta`** into **MEGA**.
-* **snpmatrix_core**: please go to the [**How can I obtain the SNP matrices for the Excel summary file?**](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file) section. This sheet is filled in after loading **`clean.core.aln.fasta`** into **MEGA**.
-* **snpmatrix_core_pairs**: please go to the [**How can I obtain the SNP matrices for the Excel summary file?**](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file) section. This sheet is filled in after loading **`clean.core.aln.fasta`** into **MEGA**.
-* **plasmids**: please check the [**PlasmidID service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service) and the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
-* **virulence**: please check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
-* **Resistance result**: please check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
-* **AMRFinderPlus Resistance result**: please check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
-* **MLVA**: please check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
+
+
+* **SNP core all sites**: you can check the [**How can I obtain the SNP matrices for the Excel summary file?**](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file) section. This sheet will be filled in automatically after running the `lablog_characterization_results` script, but it can also be filled in after loading **`phylo.aln.fasta`** manually into **MEGA**.
+* **SNP core all sites pairs**: you can check the [**How can I obtain the SNP matrices for the Excel summary file?**](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file) section. This sheet will be filled in automatically after running the `lablog_characterization_results` script, but it can also be filled in after loading **`phylo.aln.fasta`** manually into **MEGA**.
+* **SNP variable no recomb**: you can check the [**How can I obtain the SNP matrices for the Excel summary file?**](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file) section. This sheet will be filled in automatically after running the `lablog_characterization_results` script, but it can also be filled in after loading **`clean.core.aln.fasta`** manually into **MEGA**.
+* **SNP variable no recomb pairs**: you can check the [**How can I obtain the SNP matrices for the Excel summary file?**](#how-can-i-obtain-the-snp-matrices-for-the-excel-summary-file) section. This sheet will be filled in automatically after running the `lablog_characterization_results` script, but it can also be filled in after loading **`clean.core.aln.fasta`** manually into **MEGA**.
+* **plasmids**: you can check check the [**PlasmidID service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service) and the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
+* **virulence**: you can check check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
+* **Resistance result**: you can check check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
+* **AMRFinderPlus Resistance result**: you can check check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
+* **MLVA**: you can check check the [**Characterization service**](https://github.com/BU-ISCIII/BU-ISCIII/wiki/Characterization-service).
+
+>[!NOTE]
+>The previously mentioned sheets of the Excel file are automatically filled in when running the `lablog_characterization_results` script, after having run all the necessary scripts. The information indicated above is just for informative purposes in case you might need to fill in information manually or modify something.
 
 Fill in the Excel template following the previous instructions, name it according to the structure `summary_outbreak_species.xlsx`, and then do the following:
 * Being logged in your Google account, go to the **buisciii_shared** Drive folder.
@@ -319,9 +358,23 @@ Once the Excel file has been completed with all the necessary information and ha
 
 ### How can I obtain the SNP matrices for the Excel summary file?
 
-As you saw before, some sheets in the Excel summary file are filled in after loading phylo.aln or clean.core.aln into MEGA, with the objective of obtaining the corresponding SNP matrix for the samples. In this subsection, you'll see how to obtain this matrix from these files.
+As you saw before, some sheets in the Excel summary file are obtained from the files `phylo.aln` or `clean.core.aln`, in specific regarding the corresponding SNP matrices for the samples. In this subsection, you'll see how to obtain the necessary matrices from these files.
 
-First of all, phylo.aln and clean.core.aln have to be in .FASTA format before the submission into MEGA. Run the following commands:
+First of all, bear in mind that, generally, you won't need to run any additional steps apart from the `_04_run_snp_distance_matrices.sh` script, which will create the SNP matrices, and `lablog_characterization_results`, which will add them into the Excel spreadsheet. However, in this subsection it will be explained how to get these matrices manually with MEGA, if necessary.
+
+The `_04_run_snp_distance_matrices.sh` script will run `_04_snp_distance_matrices.sh`, which will use the auxiliar script called `generate_snp_distance_matrices.py` to generate the following output files:
+- `core_tab_snp_distances.tsv`: this is the distance matrix obtained from `core.tab`, which contains all variant core SNP sites.
+- `phylo_snp_distances.tsv`: this is the distance matrix obtained from `phylo.aln`, which is an alignment of all core sites including both variant and invariant sites.
+- `clean_core_snp_distances.tsv`: this is the distance matrix obtained from `clean.core.aln`, which is the SNP alignment of the core genome with both variant and invariant sites, but this time with no recombinant sites.
+- `snp_distance_matrices_metadata.json`: a JSON file indicating for each generated matrix the source file path, number of samples, and number of sites (alignment length) used.
+
+Examine these matrices and check whether there are pairs of samples for which the number of SNPs is below a certain threshold (generally, 20 SNPs). If this is the case, you can run the `evaluate_close_pairs.py` script to evaluate these sites, as will be explained in [XXX]().
+
+---
+
+**In case you want to load the alignment files into MEGA to create the SNP matrices, follow these steps:**
+
+First of all, `phylo.aln` and `clean.core.aln` have to be in .FASTA format before the submission into MEGA. Run the following commands:
 
 ```
 cp phylo.aln phylo.aln.fasta
@@ -349,15 +402,15 @@ To load `phylo.aln.fasta` or `clean.core.aln.fasta` into MEGA, follow these step
 5. Reply **YES** to the emerging window asking *Would you like to use the currently active data?*
 6. Select these options on the next window and click on OK:
 ![MEGA-setup](https://github.com/BU-ISCIII/BU-ISCIII/blob/main/images/MEGA-setup.png)
-7. You'll see a matrix like this one:
+1. You'll see a matrix like this one:
 ![MEGA-matrix](https://github.com/BU-ISCIII/BU-ISCIII/blob/main/images/MEGA-matrix.png)
-8. Click on the superior ***Export distances as Excel file*** button.
-9. On the emerging window, select **0 decimal places**, export as **matrix** and lower left matrix. You'll get this matrix as an Excel file. Copy this matrix and paste it on the **`snpmatrix_all_pos`** sheet from the summary Excel file:
+1. Click on the superior ***Export distances as Excel file*** button.
+2. On the emerging window, select **0 decimal places**, export as **matrix** and lower left matrix. You'll get this matrix as an Excel file. Copy this matrix and paste it on the **`snpmatrix_all_pos`** sheet from the summary Excel file:
 
     ![MEGA-export](https://github.com/BU-ISCIII/BU-ISCIII/blob/main/images/MEGA-export.png)
 
-10.  Repeat this procedure, but this time select **Column** as export type. You'll get an Excel file; copy it and paste it on the **`snpmatrix_all_pos_pairs`** sheet from the summary Excel file.
-11.  Repeat the previous steps for the **`clean.core.aln.fasta`** file. Repeat steps 9 and 10 with this file, and copy the Excel results from MEGA into the **`snpmatrix_core`** and **`snpmatrix_core_pairs`** sheets from the Excel summary file.
+3.   Repeat this procedure, but this time select **Column** as export type. You'll get an Excel file; copy it and paste it on the **`snpmatrix_all_pos_pairs`** sheet from the summary Excel file.
+4.   Repeat the previous steps for the **`clean.core.aln.fasta`** file. Repeat steps 9 and 10 with this file, and copy the Excel results from MEGA into the **`snpmatrix_core`** and **`snpmatrix_core_pairs`** sheets from the Excel summary file.
 
 ### What if I want to check what the tree obtained after `iqtree` looks like?
 
@@ -380,6 +433,9 @@ Let's say you already have a `.treefile` file from `iqtree` and you want to visu
    4. **Advanced** -> **Leaf node symbols** -> **Display**.
    5. **Advanced** -> **Internal node symbols** -> **Display**.
 6. If you want to export the tree, you can click on the **control panel** and then **Export**. You can export your tree in SVG, EPS, PDF, PNG, newick, phyloXML and NEXUS formats.
+
+>[!TIP]
+>The names of the nodes in your tree might not be the most appropriate ones, or maybe the researcher for whom you are creating the tree does want the node names to follow a certain format. In such case, you can create an auxiliary file with annotations, as indicated in [iTOL's Help Page](https://itol.embl.de/help.cgi#annot).
 
 Once you're done, your tree will be stored in your account with the changes you made, so you'll be able to check it whenever you like.
 
@@ -426,9 +482,47 @@ After this, run `_01_snippy_core.sh`, and you'll get the SNP alignment with no l
 
 **If you need to remove both complex and low-coverage variants at the same time, merge both .bed files and run snippy-core as indicated before, indicating the correct .bed file in the `--mask` option.**
 
+### What if I want to evaluate the variants of a certain pair of samples?
+
+In some cases, especially within an epidemiological context, it is essential to determine whether a group of samples belong to the same outbreak or not. Or, for example, within the context of tuberculosis, whether different samples belong to the same cluster, considering that this species is highly clonal. 
+
+Therefore, it is important to make sure that SNPs being reported between a pair of samples are true positives. Snippy, as any other software, has limitations that entail false positives being reported sometimes, either due to close indels or low coverage. False negatives can exist too if there is a certain fraction of heterozygosity, as indicated [in this issue](https://github.com/tseemann/snippy/issues/627).
+
+Considering this, there is another auxiliary script in Snippy's template called **`evaluate_close_pairs.py`**, which will generally take all the sample pairs for which there is a low number of SNP differences (below a certain threshold) and report a wide variety of information regarding each pair, so that the user can determine quickly whether that difference between those two samples is real or not.
+
+The usage of this script is explained in the lablog file of Snippy's template. The main arguments to take into consideration for the script's execution are:
+
+- `threshold`: keeps only pairs with SNP distance strictly less than a certain threshold, by default 20.
+
+- `warn-min-depth`: adds **low_depth** as a warning if the evidence depth of a call is less than a certain value, by default 10.
+
+- `warn-min-called-fraction`: adds **low_called_fraction** as a warning if less than X% (by default, 90) of the depth supports the base called in core.tab.
+If the call is the reference, use ref_count / depth.
+If it's an alternate, use alt_count / depth.
+
+- `warn-min-strand-fraction`: adds **strand_bias** as a warning if the less-represented strand contains fewer than X% (by default, 10) of the reads supporting the called base.
+
+- `warn-indel-distance`: adds **near_indel_or_complex** as a warning if the SNP is X (by default, 5) bases or fewer from an indel or a complex call in ``snps.raw.vcf``.
+
+- `warn-homopolymer-run`: adds **homopolymer_context** as a warning when FreeBayes' INFO/RUN is X or greater (by default, 5).
+
+- `cluster-window`: defines a local X (by default, 100) bp window to look for clusters of differential SNPs from the same pair.
+
+- `cluster-min-snps`: flags **local_snp_cluster** when there are at least X (by default, 3) SNPs from the pair within that window.
+
+Once the script has been executed, a message will be printed in the terminal indicating whether warnings were reported or not. Apart from that, the following files are generated, so that you can check the variants between each pair of samples and determine if you still want to check them in IGV, as will be explained later in this document. 
+
+- **``close_pair_snp_qc_pairs.tsv``**: a TSV file containing all close pairs and indicating matrix consistency.
+- **``close_pair_snp_qc_variants.tsv``**: a TSV file containing detailed variant information regarding each close pair of samples, indicating any possible issues that might have been found as warnings. Alternative allele's information is taken from Snippy's VCF file, while reference allele's information is taken from the sample's BAM file, using ``samtools mpileup``.
+- **``close_pair_snp_qc_variants_summary.tsv``**: a TSV that serves as a summary of the previous file. Use it to quickly check variants, and then use the QC variants file to check any variant that you might be interested in.
+- **``close_pair_snp_qc_report.xlsx``**: an Excel spreadsheet containing all the previous files as different sheets, so that all the information can be checked directly from this Excel file. An initial README sheet is included, as well as a final sheet called "Column Descriptions", that explains in detail the source and the description of each one of the columns of the tables being reported in this Excel file.
+- **``close_pair_snp_qc_metadata.json``**: a JSON file indicating the parameter values used to run this script, as well as the input and output files.
+
+After checking these files, you should have been able to identify any possible issues regarding the close pairs that were identified, like strand bias or close indels, so that you can decide whether a reported variant is true or not. If you are still not sure, you can still use Integrative Genomics Viewer (IGV) to check the BAM files of the samples of interest and visualise each variant. This will be explained in the following subsection.
+
 ### What if I want to check whether a variant is a false positive?
 
-As indicated before, snippy is run so that the minimum number of reads covering a site to be considered as a variant is 9. Sometimes, there might be a low depth of coverage of a certain nucleotide for a specific genomic position.
+As indicated before, Snippy is run so that the minimum number of reads covering a site to be considered as a variant is 10 (not included). Sometimes, there might be a low depth of coverage of a certain nucleotide for a specific genomic position.
 
 In some situations, for example when two samples belong to the same Strain Type, it might be a good idea to check **whether the number of SNPs identified in the SNP matrix for these two samples is real or not**. Depending on the real number of variants, it could also be useful to then discard low-coverage and/or complex variants as well.
 
@@ -439,47 +533,15 @@ How can we determine whether a variant is real or not? This is done with **Integ
 
 For this process, you should check the file called `core.tab` obtained after running `snippy-core`. This file contains several columns regarding the identified variants, which correspond to the reference, the position of the variant and the bases that were identified in the reference and the samples.
 
-Let's use a example. Let's say we have two samples, called 001 and 002. After running the `_00_snippy.sh`, `_01_snippy_core.sh` and `_02_phylo_aln.sh` scripts, we obtained the `phylo.aln` file that was described previously. When loading it into MEGA, we saw that there were 20 SNPs between these two samples. When loading `clean.core.aln` into MEGA, these 20 SNPs were reduced to 11 SNPs. Are these 11 SNPs real? Do any of the 20 initial SNPs have low depth of coverage? Are any of these SNPs complex? Let's check this out by means of the `core.tab` file and IGV.
+Let's use a example. Let's say we have two samples, called 001 and 002. After running the `_00_snippy.sh`, `_01_snippy_core.sh` and `_02_phylo_aln.sh` scripts, we obtained the `phylo.aln` file that was described previously. When checking the distances TSV file, or loading the alignment file into MEGA, we saw that there were 20 SNPs between these two samples. When checking the distances TSV file, or loading `clean.core.aln` into MEGA, these 20 SNPs were reduced to 11 SNPs. Are these 11 SNPs real? Do any of the 20 initial SNPs have low depth of coverage? Are any of these SNPs complex? Let's check this out by means of the SNP QC variant Excel file that we generated before and IGV.
 
-First, let's open `core.tab`, and let's filter the data contained in this file so that we see only those positions of the reference genome for which the base sequenced for samples 001 and 002 is different. To do so, we should run this command in the terminal:
+Open this Excel file and identify the variants existing between the two samples of interest, and check if there are variants with warnings associated. If this is the case, you might want to check them in IGV, and that's what will be shown in this subsection, to see exactly what these warnings are about.
 
-```
-awk '$4 != $5' core.tab | cut -f 1-5
-```
-
-By this command, we are selecting the first three columns of the file (reference ID, position and reference base), and then the columns corresponding to samples 001 and 002. However, only those rows for which the base is different for samples 001 and 002 will be shown (that's what `awk` is doing). Since `core.tab` is obtained before running gubbins, we'll see in this case the 20 initial SNPs that exist between both samples:
-
-```
-CHR	POS	REF	001	002
-NZ_CP076401.1	303947	G	T	G
-NZ_CP076401.1	540673	T	T	A
-NZ_CP076401.1	636316	T	T	C
-NZ_CP076401.1	672300	C	C	T
-NZ_CP076401.1	1012282	G	G	A
-NZ_CP076401.1	1508262	T	T	A
-NZ_CP076401.1	1589627	A	A	G
-NZ_CP076401.1	2080870	G	G	T
-NZ_CP076401.1	2420727	A	A	T
-NZ_CP076401.1	2420728	T	T	A
-NZ_CP076401.1	2420729	A	A	T
-NZ_CP076401.1	2420730	T	T	A
-NZ_CP076401.1	2420731	A	A	T
-NZ_CP076401.1	2420732	C	C	A
-NZ_CP076401.1	2608781	A	A	G
-NZ_CP076401.1	2612437	C	C	T
-NZ_CP076401.1	3440421	G	A	G
-NZ_CP076401.1	3552311	T	C	T
-NZ_CP076401.1	3675041	C	T	C
-NZ_CP076401.1	3805781	G	C	G
-```
-
-Now, you should copy this output and paste it into an **Excel** sheet. Then, create two new columns: **TRUE/FALSE** and **REASON**, since **we will check which of these 20 SNPs aren't real variants and why**.
-
-Once you're sheet is ready, and considering you've already installed IGV in your **local computer**, run IGV. You'll see this screen:
+Once you've checked the SNP QC variant Excel file, and considering you've already installed IGV in your **local computer**, run IGV. You'll see this screen:
 
 ![IGV-screenshot](https://github.com/BU-ISCIII/BU-ISCIII/blob/main/images/IGV-screenshot.png)
 
-Now, follow these steps. First, you will load the reference genome and then you'll load the `snps.bam` files you obtained previoulsy after running `snippy` for each sample:
+Now, follow these steps. First, you will load the reference genome and then you'll load the `snps.bam` files you obtained previously after running `snippy` for each sample:
 1. Go to **Genomes** -> **Load Genome from File**. Select the file you used previously as reference genome.
 2. Go to **File** -> **Load from File**. Select the `snps.bam` file from one sample. Then, click again on the same button and select the same file from the other sample.
 3. Given your Excel file, copy the position of the first variant and paste it in the box that is next to the **Go** button.
@@ -490,13 +552,11 @@ After following these steps, you'll see something like this (after zooming in):
 
 ![IGV-screenshot-true-variant](https://github.com/BU-ISCIII/BU-ISCIII/blob/main/images/IGV-screenshot-true-variant.png)
 
-Using your mouse, you can search for the specific position that is specified in the `core.tab` file and click on the superior boxes (one track corresponds to one sample and the other track belongs to the other sample). In our case, one of the boxes is grey and the other one is red for the same position. If we click on these boxes, we'll see these little windows:
+Using your mouse, you can search for the specific position that is specified in the `core.tab` file (or in the Excel spreadsheet) and click on the superior boxes (one track corresponds to one sample and the other track belongs to the other sample). In our case, one of the boxes is grey and the other one is red for the same position. If we click on these boxes, we'll see these little windows:
 
 ![TP-comparison](https://github.com/BU-ISCIII/BU-ISCIII/blob/main/images/TP-comparison.png)
 
 In this case, mostly all reads have the same base for this specific location, and this happens for both samples. The called alleles have a good depth of coverage, so we can infer that this is a **TRUE VARIANT**, since one of the samples has a lot of reads for a base that is different from the reference base and, since both samples have a good depth of coverage, we can be sure that this position really has a different base for each sample, so the difference reported by `core.tab` is real.
-
- We should thereby indicate so in the Excel file that we created before.
 
 #### CASE 2: FALSE VARIANT DUE TO LOW DEPTH OF COVERAGE
 
@@ -514,8 +574,6 @@ Snippy is configured so that the minimum number of reads covering a site to be c
 
 Both samples do indeed have an A, so both have a substitution for this position in relation to the reference genome. This is a real variant against the reference, but these samples do not really differ in their base for this position, as indicated by `core.tab`. Therefore, what is indicated by `core.tab` is FALSE; there is no real difference between both samples since both do have the same allele.
 
-In our Excel file, we should indicate this, apart from saying that for one of the samples the allele has low depth of coverage. This is why snippy didn't consider it a real variant and indicated that this sample has the reference base for this position in `core.tab`, when it is obvious that it does not.
-
 #### CASE 3: FALSE VARIANT DUE TO CLOSE INDELS
 
 In some cases, a variant might not be true because there are **insertions/deletions** close to the position that was reported. For example, let's check this image:
@@ -524,9 +582,7 @@ In some cases, a variant might not be true because there are **insertions/deleti
 
 For a specific position, both samples have the same base (an A, which is also the reference base) for almost all reads, but right next to this position there is an insertion. This will affect the variant calling, so false differences between the samples will be identified, which is the case in this situation.
 
-Furthermore, these indels are responsible for the appearance of **complex variants**. Indeed, if we check this position in one of the samples being compared, specifically in its `snps.vcf` file, we'll see this position is associated with a complex variant. 
-
-If you come across a situation like this, write FALSE on your Excel sheet and indicate there are close insertions or deletions next to the position of interest.
+Furthermore, these indels are responsible for the appearance of **complex variants**. Indeed, if we check this position in one of the samples being compared, specifically in its `snps.vcf` file, we'll see this position is associated with a complex variant.
 
 #### CASE 4: HETEROZYGOUS SITES
 
@@ -534,9 +590,7 @@ Sometimes, a certain position reported by `core.tab` will have different bases f
 
 ![recombinant-site](https://github.com/BU-ISCIII/BU-ISCIII/blob/main/images/recombinant-site.png)
 
-As you can see, both samples have reads with a C and reads with a G at the same position, so calling a base in this case gets more difficult. This is an **heterozygous site** that **snippy** most likely will discard so, even though there is a real difference between both samples, this position will not be considered when creating `clean.core.aln`, so we should check this.
-
-If you come across a situation like this, write TRUE on your Excel file, but indicate that this position if this position was discarded.
+As you can see, both samples have reads with a C and reads with a G at the same position, so calling a base in this case gets more difficult. This is an **heterozygous site** that **snippy** most likely will discard so, even though there is a real difference between both samples, this position will not be considered when creating `clean.core.aln`, so we should check this and take it into consideration in case we need to inform the researchers about it.
 
 ---
 
@@ -558,7 +612,7 @@ This module will be executed twice. The first time, select the **service_info** 
 >* `email_notes.txt`: everything you want the researcher to be aware of.
 
 >[!WARNING]
-> If chewBBACA is run as part of an **outbreak** service (as mentioned before, this service is usually not done alone), you will have generated a **summary table** with all the main results from the service. When running the `delivery` mode of `bioinfo_doc`, the last question **you will be asked will be whether you want to attach any files**. **Say yes, and paste the path to the XLSX summary table you created.**
+> If snippy is run as part of an **outbreak** service (as mentioned before, this service is usually not done alone), you will have generated a **summary table** with all the main results from the service. When running the `delivery` mode of `bioinfo_doc`, the last question **you will be asked will be whether you want to attach any files**. **Say yes, and paste the path to the XLSX summary table you created.**
 
 Lastly, once the service has been delivered and the e-mail has been sent, remember to remove all the files related to this service from `scratch_tmp`:
 
